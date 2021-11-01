@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-User = get_user_model()
+# User = get_user_model()
 
 class HomeView(View):
     def get(self, request, *args, **kwargs):
@@ -28,9 +28,9 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request, format=None):
-        qs_count = User.objects.all().count()
-        labels = ["Users", "Blue", "Yellow", "Green", "Purple", "Orange"]
-        default_items = [qs_count, 23, 2, 3, 12, 2]
+        # qs_count = User.objects.all().count()
+        labels = ["Users", "Blue", "Yellow", "Green", "Purple"]
+        default_items = [ 23, 2, 3, 12, 2]
         data = {
                 "labels": labels,
                 "default": default_items,
