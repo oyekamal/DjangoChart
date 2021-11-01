@@ -32,6 +32,7 @@ class ChartData(APIView):
     def get(self, request, format=None):
         # qs_count = User.objects.all().count()
         status = request.query_params.get("status")
+        countries = request.query_params.get("countries")
 
 
         print(status, "--------")
@@ -45,7 +46,7 @@ class ChartData(APIView):
         world = df.groupby("Country")['Confirmed','Active','Recovered','Deaths'].sum().reset_index()
 
 
-        top_20 = world.sort_values(by=[status], ascending=False).head(10)
+        top_20 = world.sort_values(by=[status], ascending=False).head(int(countries))
 
         labels = top_20['Country']
         default_items = top_20[status]

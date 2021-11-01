@@ -25,6 +25,9 @@ $("#chartSelect").change((e)=>{
 var endpoint = '/api/chart/data/'
 var defaultData = []
 var labels = [];
+
+var status = "Confirmed";
+var countries = "10";
 // $.ajax({
 //     method: "GET",
 //     url: endpoint,
@@ -47,7 +50,8 @@ var labels = [];
 
 axios.get(endpoint,{
     params: {
-        status: "Confirmed"
+        status: status,
+        countries: countries
     }
   })
   .then(function (response) {
@@ -70,10 +74,42 @@ axios.get(endpoint,{
 
   $("#status").change((e)=>{
     console.log("value : ",e.target.value);
-
+    status = e.target.value
     axios.get(endpoint,{
     params: {
-        status: e.target.value
+        
+        status: status,
+        countries: countries
+    }
+  })
+  .then(function (response) {
+    // handle success
+    console.log(response);
+        labels = response.data.labels
+        defaultData = response.data.default
+        status = response.data.status
+        setChart()
+
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+
+})
+
+
+$("#countries").change((e)=>{
+    console.log("value : ",e.target.value);
+    countries = e.target.value
+    axios.get(endpoint,{
+    params: {
+        
+        status: status,
+        countries: countries
     }
   })
   .then(function (response) {
@@ -276,6 +312,14 @@ var myChart4 = new Chart(ctx4, {
                 <option value="Deaths">Deaths</option>
                 <option value="Recovered">Recovered</option>
                 <option value="Active">Active</option>
+            </select>
+
+            <select id="countries">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
             </select>
         </div>
 
