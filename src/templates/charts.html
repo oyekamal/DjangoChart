@@ -23,6 +23,8 @@ $("#chartSelect").change((e)=>{
     $("#"+e.target.value).show();
 })
 var endpoint = '/api/chart/data/'
+var endpointTime = 'api/timeSeries/data/'
+
 var defaultData = []
 var labels = [];
 
@@ -56,11 +58,30 @@ axios.get(endpoint,{
   })
   .then(function (response) {
     // handle success
-    console.log(response);
+    // console.log(response);
         labels = response.data.labels
         defaultData = response.data.default
         status = response.data.status
         setChart()
+
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+
+  axios.get(endpointTime,{
+    params: {
+        country: "Algeria",
+    }
+  })
+  .then(function (response) {
+    // handle success
+    console.log(response);
+
 
   })
   .catch(function (error) {
@@ -84,7 +105,7 @@ axios.get(endpoint,{
   })
   .then(function (response) {
     // handle success
-    console.log(response);
+    // console.log(response);
         labels = response.data.labels
         defaultData = response.data.default
         status = response.data.status
@@ -114,7 +135,7 @@ $("#countries").change((e)=>{
   })
   .then(function (response) {
     // handle success
-    console.log(response);
+    // console.log(response);
         labels = response.data.labels
         defaultData = response.data.default
         status = response.data.status
@@ -137,6 +158,8 @@ function setChart(){
     var ctx2 = document.getElementById("myChart2");
     var ctx3 = document.getElementById("myChart3");
     var ctx4 = document.getElementById("myChart4");
+    var element = $(this);
+    $(element).remove();
     var myChart2 = new Chart(ctx2, {
     type: 'radar',
     data: {
@@ -174,7 +197,7 @@ function setChart(){
     }
 });
 
-    var myChart = new Chart(ctx, {
+var myChart = new Chart(ctx, {
     type: 'polarArea',
     data: {
         labels: labels,

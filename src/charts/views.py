@@ -6,6 +6,7 @@ from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import pandas as pd
+import json
 
 
 
@@ -54,6 +55,42 @@ class ChartData(APIView):
                 "labels": labels,
                 "default": default_items,
                 "status":status
+        }
+
+
+        return Response(data)
+
+class TimeSeriesData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+        # qs_count = User.objects.all().count()
+        # status = request.query_params.get("status")
+        country = request.query_params.get("country")
+
+
+        # print(status, "--------")
+
+        path = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+
+        df = pd.read_csv(path)
+
+        clean_data = pd.DataFrame(df[df["Country/Region"] == country ]).T
+        clean_data.drop(["Province/State","Country/Region","Lat","Long"], axis=0, inplace=True )
+
+       
+        result = clean_data.to_json(orient="split")
+
+        parsed = json.loads(result)
+
+        for i, each in enumerate(parsed['data']) :
+            parsed['data'][i] = parsed['data'][i][0]
+
+        
+        data = {
+                "data": parsed['data'],
+                "time": parsed['index'],
         }
 
 
