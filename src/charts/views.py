@@ -31,6 +31,10 @@ class ChartData(APIView):
 
     def get(self, request, format=None):
         # qs_count = User.objects.all().count()
+        status = request.query_params.get("status")
+
+
+        print(status, "--------")
 
         path = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/12-25-2020.csv'
         df = pd.read_csv(path)
@@ -41,13 +45,16 @@ class ChartData(APIView):
         world = df.groupby("Country")['Confirmed','Active','Recovered','Deaths'].sum().reset_index()
 
 
-        top_20 = world.sort_values(by=['Confirmed'], ascending=False).head(10)
+        top_20 = world.sort_values(by=[status], ascending=False).head(10)
 
         labels = top_20['Country']
-        default_items = top_20['Confirmed']
+        default_items = top_20[status]
         data = {
                 "labels": labels,
                 "default": default_items,
+                "status":status
         }
+
+
         return Response(data)
 

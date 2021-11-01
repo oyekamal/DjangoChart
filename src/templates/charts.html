@@ -39,14 +39,24 @@ var labels = [];
 //     }
 // })
 
-axios.get(endpoint)
+// Confirmed
+// Deaths
+// Recovered
+// Active
+
+
+axios.get(endpoint,{
+    params: {
+        status: "Confirmed"
+    }
+  })
   .then(function (response) {
     // handle success
     console.log(response);
         labels = response.data.labels
         defaultData = response.data.default
+        status = response.data.status
         setChart()
-
 
   })
   .catch(function (error) {
@@ -56,6 +66,35 @@ axios.get(endpoint)
   .then(function () {
     // always executed
   });
+
+
+  $("#status").change((e)=>{
+    console.log("value : ",e.target.value);
+
+    axios.get(endpoint,{
+    params: {
+        status: e.target.value
+    }
+  })
+  .then(function (response) {
+    // handle success
+    console.log(response);
+        labels = response.data.labels
+        defaultData = response.data.default
+        status = response.data.status
+        setChart()
+
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+
+})
+  
 
 function setChart(){
     var ctx = document.getElementById("myChart");
@@ -67,7 +106,7 @@ function setChart(){
     data: {
         labels: labels,
         datasets: [{
-            label: '# of Votes',
+            label: status,
             data: defaultData,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -104,7 +143,7 @@ function setChart(){
     data: {
         labels: labels,
         datasets: [{
-            label: '# of Votes',
+            label: status,
             data: defaultData,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -142,7 +181,7 @@ var myChart3 = new Chart(ctx3, {
     data: {
         labels: labels,
         datasets: [{
-            label: '# of Votes',
+            label: status,
             data: defaultData,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -180,7 +219,7 @@ var myChart4 = new Chart(ctx4, {
     data: {
         labels: labels,
         datasets: [{
-            label: '# of Votes',
+            label: status,
             data: defaultData,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
@@ -226,10 +265,17 @@ var myChart4 = new Chart(ctx4, {
         <h1>Covid 19</h1>
         <div>
             <select id="chartSelect">
-                <option value="myChart">polar</option>
-                <option value="myChart2">radar</option>
-                <option value="myChart3">line</option>
-                <option value="myChart4">bar</option>
+                <option value="myChart" selected>Polar</option>
+                <option value="myChart2">Radar</option>
+                <option value="myChart3">Line</option>
+                <option value="myChart4">Bar</option>
+            </select>
+
+            <select id="status">
+                <option value="Confirmed" selected>Confirmed</option>
+                <option value="Deaths">Deaths</option>
+                <option value="Recovered">Recovered</option>
+                <option value="Active">Active</option>
             </select>
         </div>
 
