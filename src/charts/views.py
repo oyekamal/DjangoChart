@@ -84,13 +84,19 @@ class TimeSeriesData(APIView):
 
         parsed = json.loads(result)
 
+        clean_data = []
         for i, each in enumerate(parsed['data']) :
-            parsed['data'][i] = parsed['data'][i][0]
+            clean_dic = {}
+            clean_dic["value"] = parsed['data'][i][0]
+            new = parsed['index'][i].split('/')
 
-        
+            clean_dic["data"] = "20{0}-{1}-{2}".format(new[2],new[1],new[0])
+
+            clean_data.append(clean_dic)
+
+        response = sorted(clean_data, key = lambda i: i['value'],reverse=True)
         data = {
-                "data": parsed['data'],
-                "time": parsed['index'],
+                "clean_data": response,
         }
 
 

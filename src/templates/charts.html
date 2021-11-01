@@ -27,6 +27,7 @@ var endpointTime = 'api/timeSeries/data/'
 
 var defaultData = []
 var labels = [];
+var clean_data = [];
 
 var status = "Confirmed";
 var countries = "10";
@@ -73,7 +74,10 @@ axios.get(endpoint,{
     // always executed
   });
 
-  axios.get(endpointTime,{
+
+  function timeSeriesReturn (){
+
+    axios.get(endpointTime,{
     params: {
         country: "Algeria",
     }
@@ -81,8 +85,9 @@ axios.get(endpoint,{
   .then(function (response) {
     // handle success
     console.log(response);
+    clean_data = response.data.clean_data
 
-
+    
   })
   .catch(function (error) {
     // handle error
@@ -91,6 +96,11 @@ axios.get(endpoint,{
   .then(function () {
     // always executed
   });
+
+  return clean_data
+
+  }
+
 
 
   $("#status").change((e)=>{
@@ -314,6 +324,98 @@ var myChart4 = new Chart(ctx4, {
 
 
 
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+console.log("clean_data")
+console.log(clean_data)
+var data = clean_data;
+
+
+
+axios.get(endpointTime,{
+    params: {
+        country: "Algeria",
+    }
+  })
+  .then(function (response) {
+    // handle success
+    console.log("response.data.clean_data");
+    console.log(response.data.clean_data);
+//     for(var i = 0; i < 300; i++){
+//   var date = new Date();
+//   date.setHours(0,0,0,0);
+//   date.setDate(i);
+//   value -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
+//   data.push({date:date, value: value});
+// }
+
+// chart.data = data;
+var newData = [];
+response.data.clean_data.forEach((item,index)=>{
+    newData.push({value:item.value, date: new Date(item.data)})
+})
+console.log("new data : ", newData);
+    chart.data = newData;
+
+    
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+
+
+// var data = [];
+// var value = 50;
+// for(var i = 0; i < 300; i++){
+//   var date = new Date();
+//   date.setHours(0,0,0,0);
+//   date.setDate(i);
+//   value -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
+//   data.push({date:date, value: value});
+// }
+
+// chart.data = data;
+console.log("data");
+console.log(data);
+
+
+// Create axes
+var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+dateAxis.renderer.minGridDistance = 60;
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+// Create series
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.valueY = "value";
+series.dataFields.dateX = "date";
+series.tooltipText = "{value}"
+
+series.tooltip.pointerOrientation = "vertical";
+
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.snapToSeries = series;
+chart.cursor.xAxis = dateAxis;
+
+//chart.scrollbarY = new am4core.Scrollbar();
+chart.scrollbarX = new am4core.Scrollbar();
+
+}); 
+
+
+
+
+
 {% endblock %}
 </script>
 
@@ -338,8 +440,8 @@ var myChart4 = new Chart(ctx4, {
             </select>
 
             <select id="countries">
-                <option value="5" selected>5</option>
-                <option value="10">10</option>
+                <option value="5" >5</option>
+                <option value="10" selected>10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
                 <option value="25">25</option>
@@ -361,6 +463,9 @@ var myChart4 = new Chart(ctx4, {
             </div>
 
         </div>
+
+
+        <div id="chartdiv"></div>
 
        
 
