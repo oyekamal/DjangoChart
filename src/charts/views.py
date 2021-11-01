@@ -5,6 +5,8 @@ from django.views.generic import View
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import pandas as pd
+
 
 
 # User = get_user_model()
@@ -29,8 +31,20 @@ class ChartData(APIView):
 
     def get(self, request, format=None):
         # qs_count = User.objects.all().count()
-        labels = ["Users", "Blue", "Yellow", "Green", "Purple"]
-        default_items = [ 23, 2, 3, 12, 2]
+
+        path = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/12-25-2020.csv'
+        df = pd.read_csv(path)
+
+        df.drop(['FIPS', 'Admin2','Last_Update','Province_State', 'Combined_Key'], axis=1, inplace=True)
+        df.rename(columns={'Country_Region': "Country"}, inplace=True)
+
+        world = df.groupby("Country")['Confirmed','Active','Recovered','Deaths'].sum().reset_index()
+
+
+        top_20 = world.sort_values(by=['Confirmed'], ascending=False).head(10)
+
+        labels = top_20['Country']
+        default_items = top_20['Confirmed']
         data = {
                 "labels": labels,
                 "default": default_items,
