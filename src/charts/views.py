@@ -90,7 +90,7 @@ class TimeSeriesData(APIView):
             clean_dic["value"] = parsed['data'][i][0]
             new = parsed['index'][i].split('/')
 
-            clean_dic["data"] = "20{0}-{1}-{2}".format(new[2],new[1],new[0])
+            clean_dic["data"] = "20{0}-{2}-{1}".format(new[2],new[1],new[0])
 
             clean_data.append(clean_dic)
 
