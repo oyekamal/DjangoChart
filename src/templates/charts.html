@@ -391,7 +391,7 @@ axios.get(endpointTime,{
     backend_countries = response.data.country;
     var countries_option = "";
     backend_countries.forEach(element=>{
-            if (countries_option == ""){
+            if (element == country){
                 countries_option += "<option value='"+element+"' selected>"+element+"</option>"
             }
             countries_option += "<option value='"+element+"'>"+element+"</option>"
