@@ -31,6 +31,8 @@ var clean_data = [];
 
 var status = "Confirmed";
 var countries = "10";
+var backend_countries = [];
+var country = "Pakistan";
 // $.ajax({
 //     method: "GET",
 //     url: endpoint,
@@ -160,6 +162,45 @@ $("#countries").change((e)=>{
     // always executed
   });
 
+})
+
+$("#country_drop").change((e)=>{
+    // console.log("value : ",e.target.value);
+    country = e.target.value
+    axios.get(endpointTime,{
+    params: {
+        country: country,
+    }
+  })
+  .then(function (response) {
+    // handle success
+//     console.log("response.data.clean_data");
+//     console.log(response.data);
+//     backend_countries = response.data.country;
+//     var countries_option = "";
+//     backend_countries.forEach(element=>{
+//             countries_option += "<option value='"+element+"' selected>"+element+"</option>"
+//     })
+// $('#country').html(countries_option);
+
+
+// var newData = [];
+// response.data.clean_data.forEach((item,index)=>{
+//     newData.push({value:item.value, date: new Date(item.data)})
+// })
+// console.log("new data : ", newData);
+//     clean_data = newData;
+timeSeriesGraph();
+
+    
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
 })
   
 
@@ -322,9 +363,9 @@ var myChart4 = new Chart(ctx4, {
 }
 // var ctx = document.getElementById("myChart");
 
+function timeSeriesGraph(){
 
-
-am4core.ready(function() {
+    am4core.ready(function() {
 
 // Themes begin
 am4core.useTheme(am4themes_animated);
@@ -340,28 +381,31 @@ var data = clean_data;
 
 axios.get(endpointTime,{
     params: {
-        country: "Algeria",
+        country: country,
     }
   })
   .then(function (response) {
     // handle success
     console.log("response.data.clean_data");
-    console.log(response.data.clean_data);
-//     for(var i = 0; i < 300; i++){
-//   var date = new Date();
-//   date.setHours(0,0,0,0);
-//   date.setDate(i);
-//   value -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-//   data.push({date:date, value: value});
-// }
+    console.log(response.data);
+    backend_countries = response.data.country;
+    var countries_option = "";
+    backend_countries.forEach(element=>{
+            if (countries_option == ""){
+                countries_option += "<option value='"+element+"' selected>"+element+"</option>"
+            }
+            countries_option += "<option value='"+element+"'>"+element+"</option>"
+    })
+$('#country_drop').html(countries_option);
 
-// chart.data = data;
+
 var newData = [];
 response.data.clean_data.forEach((item,index)=>{
     newData.push({value:item.value, date: new Date(item.data)})
 })
 console.log("new data : ", newData);
-    chart.data = newData;
+    clean_data = newData;
+    chart.data = clean_data;
 
     
   })
@@ -373,20 +417,7 @@ console.log("new data : ", newData);
     // always executed
   });
 
-
-// var data = [];
-// var value = 50;
-// for(var i = 0; i < 300; i++){
-//   var date = new Date();
-//   date.setHours(0,0,0,0);
-//   date.setDate(i);
-//   value -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-//   data.push({date:date, value: value});
-// }
-
-// chart.data = data;
-console.log("data");
-console.log(data);
+  document.getElementById("country_name").innerHTML = "Country: " + country;
 
 
 // Create axes
@@ -411,6 +442,11 @@ chart.cursor.xAxis = dateAxis;
 chart.scrollbarX = new am4core.Scrollbar();
 
 }); 
+
+}
+
+timeSeriesGraph();
+
 
 
 
@@ -472,7 +508,16 @@ chart.scrollbarX = new am4core.Scrollbar();
             </div>
 
         </div>
+        <div><h1>Cases status</h1></div>
+        
+        <div><h3 id='country_name' >Country:  </h3></div>
 
+        <div>
+            <select id="country_drop">
+                
+                <option value="5" >5</option>
+            </select>
+        </div>
 
         <div style=height:500px id="chartdiv"></div>
 

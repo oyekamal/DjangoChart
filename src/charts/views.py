@@ -70,13 +70,14 @@ class TimeSeriesData(APIView):
         country = request.query_params.get("country")
 
 
-        # print(status, "--------")
+        print(country, "--------")
 
         path = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 
         df = pd.read_csv(path)
-
+        
         clean_data = pd.DataFrame(df[df["Country/Region"] == country ]).T
+        country = df["Country/Region"].unique()
         clean_data.drop(["Province/State","Country/Region","Lat","Long"], axis=0, inplace=True )
 
        
@@ -97,6 +98,7 @@ class TimeSeriesData(APIView):
         response = sorted(clean_data, key = lambda i: i['value'],reverse=True)
         data = {
                 "clean_data": response,
+                "country":country,
         }
 
 
