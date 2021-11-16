@@ -15,5 +15,7 @@ WORKDIR /code
 # Copy the current directory contents into the container at /music_service
 ADD . /code/
 
+
+RUN python -m pip install --upgrade pip
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
