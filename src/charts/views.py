@@ -95,9 +95,9 @@ class TimeSeriesData(APIView):
 
             clean_data.append(clean_dic)
 
-        response = sorted(clean_data, key = lambda i: i['value'],reverse=True)
+        # response = sorted(clean_data, key = lambda i: i['value'],reverse=True)
         data = {
-                "clean_data": response,
+                "clean_data": clean_data,
                 "country":country,
         }
 
